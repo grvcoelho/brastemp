@@ -1,0 +1,47 @@
+{
+  "variables": {
+    "aws_access_key": "",
+    "aws_secret_key": "",
+    "ami_name": "hashistack/arch-linux-lts-standard-{{ isotime }}",
+    "ami_description": "Base Hashistack AMI",
+    "region": "us-east-1"
+  },
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "access_key": "{{ user `aws_access_key` }}",
+      "secret_key": "{{ user `aws_secret_key` }}",
+      "region": "{{ user `region` }}",
+      "ami_name": "{{ user `ami_name` | clean_ami_name }}",
+      "ami_description": "{{ user `ami_description` }}",
+      "instance_type": "t2.medium",
+      "temporary_key_pair_name": "packer {{ uuid }}",
+      "ssh_username": "root",
+      "source_ami_filter": {
+        "filters": {
+          "virtualization-type": "hvm",
+          "name": "arch-linux-lts-*.x86_64-ebs",
+          "root-device-type": "ebs"
+        },
+        "most_recent": true
+      }
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "pacman -Syy --force archlinux-keyring --noconfirm && dirmngr < /dev/null && pacman-key --init && pacman -Syu --force --noconfirm unzip go git python-pip python2-pip && pip2 install ansible"
+      ]
+    },
+    {
+      "type": "ansible-local",
+      "playbook_file": "./playbook.yml",
+      "inventory_file": "./configurations/hosts",
+      "playbook_dir": "./configurations",
+      "extra_arguments": [
+        "--limit localhost"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+- name: "Install base packages"
+  package:
+    name: "{{ item }}"
+    state: latest
+  become: true
+  with_items:
+  - tree
+  - unzip
+  - jq
+  - htop
+  - tmux
+  - curl
+  - wget
+  - git
+  - go
+  - iptables
+
+- name: "Install base packages with pip"
+  pip:
+    name: "{{ item }}"
+    state: latest
+  become: true
+  with_items:
+    - awscli
+    - httpie
