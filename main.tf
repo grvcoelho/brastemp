@@ -3,7 +3,14 @@ provider "aws" {
   profile = "${var.aws_profile}"
 }
 
-resource "aws_instance" "app" {
-  ami           = "ami-408c7f28"
-  instance_type = "t1.micro"
+module "network" {
+  source = "./modules/network"
+  name   = "${var.name}"
+
+  vpc_cidr_block = "17.10.0.0/16"
+
+  availability_zones = [
+    "${var.aws_region}a",
+    "${var.aws_region}b",
+  ]
 }
