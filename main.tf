@@ -36,7 +36,7 @@ data "aws_ami" "consul" {
 
   filter {
     name   = "name"
-    values = ["hashistack/arch-linux-lts-standard-*"]
+    values = ["hashistack-arch-linux-lts-standard-*"]
   }
 }
 
