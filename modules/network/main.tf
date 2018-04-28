@@ -1,6 +1,14 @@
+# ------------------------------------------------------------------------------
+# LOCAL VARIABLES
+# ------------------------------------------------------------------------------
+
 locals {
   az_count = "${length(var.availability_zones)}"
 }
+
+# ------------------------------------------------------------------------------
+# VPC
+# ------------------------------------------------------------------------------
 
 resource "aws_vpc" "vpc" {
   cidr_block           = "${var.vpc_cidr_block}"
@@ -12,13 +20,25 @@ resource "aws_vpc" "vpc" {
   }
 }
 
-resource "aws_eip" "nat" {
-  count = "${local.az_count}"
-  vpc   = true
-}
+# ------------------------------------------------------------------------------
+# INTERNET GATEWAY AND NAT GATEWAY
+# ------------------------------------------------------------------------------
 
 resource "aws_internet_gateway" "ig" {
   vpc_id = "${aws_vpc.vpc.id}"
+
+  tags {
+    Name = "${var.name} internet gateway"
+  }
+}
+
+resource "aws_eip" "nat" {
+  count = "${local.az_count}"
+  vpc   = true
+
+  tags {
+    Name = "${var.name} nat gateway ip"
+  }
 }
 
 resource "aws_nat_gateway" "nat" {
@@ -26,7 +46,15 @@ resource "aws_nat_gateway" "nat" {
   allocation_id = "${element(aws_eip.nat.*.id, count.index)}"
   subnet_id     = "${element(aws_subnet.public.*.id, count.index)}"
   depends_on    = ["aws_internet_gateway.ig"]
+
+  tags {
+    Name = "${var.name} nat gateway"
+  }
 }
+
+# ------------------------------------------------------------------------------
+# SUBNETS
+# ------------------------------------------------------------------------------
 
 resource "aws_subnet" "private" {
   count      = "${local.az_count}"
@@ -53,6 +81,10 @@ resource "aws_subnet" "public" {
     Name = "${var.name} public ${element(var.availability_zones, count.index)}"
   }
 }
+
+# ------------------------------------------------------------------------------
+# ROUTE TABLES
+# ------------------------------------------------------------------------------
 
 resource "aws_route_table" "public" {
   vpc_id = "${aws_vpc.vpc.id}"
