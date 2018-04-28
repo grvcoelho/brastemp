@@ -57,7 +57,8 @@ module "consul_servers" {
   vpc_id     = "${module.network.vpc_id}"
   subnet_ids = "${module.network.private_subnets_ids}"
 
-  allowed_ssh_cidr_blocks = ["0.0.0.0/0"]
+  allowed_ssh_cidr_blocks     = ["0.0.0.0/0"]
+  allowed_inbound_cidr_blocks = ["0.0.0.0/0"]
 }
 
 data "template_file" "user_data_server" {

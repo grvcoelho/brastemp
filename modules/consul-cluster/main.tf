@@ -44,6 +44,14 @@ resource "aws_security_group_rule" "allow_all_outbound" {
   security_group_id = "${aws_security_group.lc_security_group.id}"
 }
 
+module "security_group_rules" {
+  source = "../consul-security-group-rules"
+
+  security_group_id                  = "${aws_security_group.lc_security_group.id}"
+  allowed_inbound_cidr_blocks        = ["${var.allowed_inbound_cidr_blocks}"]
+  allowed_inbound_security_group_ids = ["${var.allowed_inbound_security_group_ids}"]
+}
+
 # -----------------------------------------------------------------------------
 # IAM, PERMISSIONS AND ROLES
 # -----------------------------------------------------------------------------
