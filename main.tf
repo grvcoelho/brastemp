@@ -26,7 +26,7 @@ module "network" {
 # CONSUL SERVERS
 # -----------------------------------------------------------------------------
 
-data "aws_ami" "consul" {
+data "aws_ami" "hashistack" {
   most_recent = true
 
   filter {
@@ -40,18 +40,19 @@ data "aws_ami" "consul" {
   }
 }
 
-module "consul_servers" {
-  source = "./modules/consul-cluster"
+module "hashistack_servers" {
+  source = "./modules/hashistack-cluster"
 
-  cluster_name  = "${var.name}-server"
+  name = "${var.name}-server"
+
   cluster_size  = "${var.cluster_size}"
   instance_type = "t2.micro"
 
   cluster_tag_key   = "${var.cluster_tag_key}"
   cluster_tag_value = "${var.cluster_tag_value}"
 
-  ami_id       = "${data.aws_ami.consul.image_id}"
-  user_data    = "${data.template_file.user_data_server.rendered}"
+  ami_id       = "${data.aws_ami.hashistack.image_id}"
+  user_data    = "${data.template_file.init_hashistack_server.rendered}"
   ssh_key_name = "${var.ssh_key_name}"
 
   vpc_id     = "${module.network.vpc_id}"
@@ -61,8 +62,8 @@ module "consul_servers" {
   allowed_inbound_cidr_blocks = ["0.0.0.0/0"]
 }
 
-data "template_file" "user_data_server" {
-  template = "${file("${path.module}/modules/scripts/user-data-server.sh")}"
+data "template_file" "init_hashistack_server" {
+  template = "${file("${path.module}/modules/userdata/init-hashistack-server.sh")}"
 
   vars {
     cluster_tag_key   = "${var.cluster_tag_key}"

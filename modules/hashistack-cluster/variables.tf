@@ -3,7 +3,7 @@
 # You must provide a value for each of these parameters.
 # ------------------------------------------------------------------------------
 
-variable "cluster_name" {
+variable "name" {
   description = "The name of the Consul cluster (e.g. consul-stage). This variable is used to namespace all resources created by this module."
 }
 

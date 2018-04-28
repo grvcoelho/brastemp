@@ -3,12 +3,12 @@
 # -----------------------------------------------------------------------------
 
 resource "aws_security_group" "lc_security_group" {
-  name_prefix = "${var.cluster_name}"
-  description = "Security group for the ${var.cluster_name} launch configuration"
+  name_prefix = "${var.name}"
+  description = "Security group for the ${var.name} launch configuration"
   vpc_id      = "${var.vpc_id}"
 
   tags {
-    Name = "${var.cluster_name}"
+    Name = "${var.name}"
   }
 }
 
@@ -57,12 +57,12 @@ module "security_group_rules" {
 # -----------------------------------------------------------------------------
 
 resource "aws_iam_instance_profile" "instance_profile" {
-  name_prefix = "${var.cluster_name}"
+  name_prefix = "${var.name}"
   role        = "${aws_iam_role.instance_role.name}"
 }
 
 resource "aws_iam_role" "instance_role" {
-  name_prefix        = "${var.cluster_name}"
+  name_prefix        = "${var.name}"
   assume_role_policy = "${data.aws_iam_policy_document.instance_role.json}"
 }
 
@@ -89,7 +89,7 @@ module "iam_policies" {
 # -----------------------------------------------------------------------------
 
 resource "aws_launch_configuration" "launch_configuration" {
-  name_prefix   = "${var.cluster_name}"
+  name_prefix   = "${var.name}"
   image_id      = "${var.ami_id}"
   instance_type = "${var.instance_type}"
   user_data     = "${var.user_data}"
@@ -106,7 +106,7 @@ resource "aws_launch_configuration" "launch_configuration" {
 }
 
 resource "aws_autoscaling_group" "autoscaling_group" {
-  name_prefix = "${var.cluster_name}"
+  name_prefix = "${var.name}"
 
   launch_configuration = "${aws_launch_configuration.launch_configuration.name}"
 
@@ -124,7 +124,7 @@ resource "aws_autoscaling_group" "autoscaling_group" {
   tags = [
     {
       key                 = "Name"
-      value               = "${var.cluster_name}"
+      value               = "${var.name}"
       propagate_at_launch = true
     },
     {
