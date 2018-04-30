@@ -88,8 +88,8 @@ module "hashistack_servers" {
   vpc_id     = "${module.network.vpc_id}"
   subnet_ids = "${module.network.private_subnets_ids}"
 
-  allowed_ssh_cidr_blocks     = ["0.0.0.0/0"]
-  allowed_inbound_cidr_blocks = ["0.0.0.0/0"]
+  allowed_inbound_cidr_blocks    = ["0.0.0.0/0"]
+  allowed_ssh_security_group_ids = ["${module.bastion.security_group_id}"]
 }
 
 data "template_file" "init_hashistack_server" {

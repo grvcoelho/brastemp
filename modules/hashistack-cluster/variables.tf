@@ -19,11 +19,6 @@ variable "vpc_id" {
   description = "The ID of the VPC in which to deploy the Consul cluster"
 }
 
-variable "allowed_inbound_cidr_blocks" {
-  description = "A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Consul"
-  type        = "list"
-}
-
 variable "user_data" {
   description = "A User Data script to execute while the server is booting. We remmend passing in a bash script that executes the run-consul script, which should have been installed in the Consul AMI by the install-consul module."
 }
@@ -63,6 +58,12 @@ variable "availability_zones" {
 variable "ssh_key_name" {
   description = "The name of an EC2 Key Pair that can be used to SSH to the EC2 Instances in this cluster. Set to an empty string to not associate a Key Pair."
   default     = ""
+}
+
+variable "allowed_inbound_cidr_blocks" {
+  description = "A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Consul"
+  type        = "list"
+  default     = []
 }
 
 variable "allowed_ssh_cidr_blocks" {
