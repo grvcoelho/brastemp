@@ -52,4 +52,4 @@
 - name: "Register consul"
   service:
     name: "consul"
-    enabled: true
+    enabled: false

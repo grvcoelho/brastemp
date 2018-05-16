@@ -1,0 +1,20 @@
+---
+
+- name: "Install nosce"
+  shell: go get -u github.com/grvcoelho/nosce
+
+- name: "Copy nosce to PATH"
+  copy:
+    src: /root/go/bin/nosce
+    dest: /usr/local/bin/
+    owner: root
+    group: root
+    mode: 0755
+
+- name: "Create nosce dir"
+  file:
+    path: /etc/nosce
+    state: directory
+    owner: root
+    group: root
+    mode: 0644
