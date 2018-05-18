@@ -33,6 +33,15 @@
     mode: 0754
     recurse: yes
 
+
+- name: "Create consul nosce dir"
+  file:
+    path: /etc/nosce/consul
+    state: directory
+    owner: root
+    group: root
+    mode: 0644
+
 - name: "Copy consul initial config"
   copy:
     src: consul-main.json
