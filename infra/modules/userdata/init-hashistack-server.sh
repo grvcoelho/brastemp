@@ -35,11 +35,13 @@ function build_ec2_metadata {
   local readonly metadata_nosce_file="$1"
 
   cat << EOF > $metadata_nosce_file
-EC2_LOCAL_IPV4=$(nosce --endpoint https://169254.now.sh get local-ipv4)
-EC2_PUBLIC_IPV4=$(nosce --endpoint https://169254.now.sh get public-ipv4)
-EC2_INSTANCE_ID=$(nosce --endpoint https://169254.now.sh get instance-id)
-EC2_AVAILABILITY_ZONE=$(nosce --endpoint https://169254.now.sh get availability-zone)
+EC2_LOCAL_IPV4=$(nosce get local-ipv4)
+EC2_PUBLIC_IPV4=$(nosce get public-ipv4)
+EC2_INSTANCE_ID=$(nosce get instance-id)
+EC2_AVAILABILITY_ZONE=$(nosce get availability-zone)
 EOF
+
+  export $(cat $metadata_nosce_file)
 }
 
 function build_consul_metadata {
@@ -48,6 +50,35 @@ function build_consul_metadata {
   cat << EOF > $consul_nosce_file
 CONSUL_TAG_KEY=${cluster_tag_key}
 CONSUL_TAG_VALUE=${cluster_tag_value}
+EOF
+
+  export $(cat $consul_nosce_file)
+}
+
+# ------------------------------------------------------------------------------
+# CONFIGURATION
+# ------------------------------------------------------------------------------
+
+function build_consul_configuration {
+  local readonly consul_config_dir="$1"
+  local readonly instance_ip_address="$EC2_LOCAL_IPV4"
+  local readonly instance_id="$EC2_INSTANCE_ID"
+  local readonly bootstrap_expect="${cluster_size}"
+  local readonly datacenter="${datacenter}"
+  local readonly region="${region}"
+
+  cat << EOF > "$consul_config_dir/server.json"
+{
+  "advertise_addr": "$instance_ip_address",
+  "bind_addr": "$instance_ip_address",
+	"bootstrap_expect": $bootstrap_expect,
+	"datacenter": "$datacenter",
+	"retry_join": [
+    "provider=aws region=$region tag_key=$CONSUL_TAG_KEY tag_value=$CONSUL_TAG_VALUE"
+  ],
+	"server": true,
+  "ui" : true
+}
 EOF
 }
 
@@ -58,12 +89,16 @@ EOF
 function run {
   local readonly metadata_nosce_file="/etc/nosce/metadata"
   local readonly consul_nosce_file="/etc/nosce/consul"
+  local readonly consul_config_dir="/etc/consul/conf.d"
 
   log_info "Building EC2 Metadata"
   build_ec2_metadata $metadata_nosce_file
 
   log_info "Building Consul Metadata"
   build_consul_metadata $consul_nosce_file
+
+  log_info "Building Consul Configuration"
+  build_consul_configuration $consul_config_dir
 }
 
 run "$@"

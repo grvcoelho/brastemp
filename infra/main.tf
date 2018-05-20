@@ -97,7 +97,11 @@ data "template_file" "init_hashistack_server" {
   template = "${file("${path.module}/modules/userdata/init-hashistack-server.sh")}"
 
   vars {
+    cluster_size      = "${var.cluster_size}"
     cluster_tag_key   = "${var.cluster_tag_key}"
     cluster_tag_value = "${var.cluster_tag_value}"
+
+    datacenter = "dc1"
+    region     = "${var.aws_region}"
   }
 }
