@@ -35,10 +35,10 @@ function build_ec2_metadata {
   local readonly metadata_nosce_file="$1"
 
   cat << EOF > $metadata_nosce_file
-EC2_LOCAL_IPV4=$(nosce --endpoint https://169254.now.sh get local-ipv4)"
-EC2_PUBLIC_IPV4=$(nosce --endpoint https://169254.now.sh get public-ipv4)"
-EC2_INSTANCE_ID=$(nosce --endpoint https://169254.now.sh get instance-id)"
-EC2_AVAILABILITY_ZONE=$(nosce --endpoint https://169254.now.sh get availability-zone)"
+EC2_LOCAL_IPV4=$(nosce --endpoint https://169254.now.sh get local-ipv4)
+EC2_PUBLIC_IPV4=$(nosce --endpoint https://169254.now.sh get public-ipv4)
+EC2_INSTANCE_ID=$(nosce --endpoint https://169254.now.sh get instance-id)
+EC2_AVAILABILITY_ZONE=$(nosce --endpoint https://169254.now.sh get availability-zone)
 EOF
 }
 
@@ -46,8 +46,8 @@ function build_consul_metadata {
   local readonly consul_nosce_file="$1"
 
   cat << EOF > $consul_nosce_file
-echo "CONSUL_TAG_KEY=${cluster_tag_key}"
-echo "CONSUL_TAG_VALUE=${cluster_tag_value}"
+CONSUL_TAG_KEY=${cluster_tag_key}
+CONSUL_TAG_VALUE=${cluster_tag_value}
 EOF
 }
 
