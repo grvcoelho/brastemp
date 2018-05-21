@@ -2,9 +2,9 @@
   "variables": {
     "aws_access_key": "",
     "aws_secret_key": "",
-    "aws_profile": "hashistack",
-    "ami_name": "hashistack-arch-linux-lts-standard-{{ timestamp }}",
-    "ami_description": "Base Hashistack AMI",
+    "aws_profile": "brastemp",
+    "ami_name": "brastemp-arch-linux-lts-standard-{{ timestamp }}",
+    "ami_description": "Base brastemp AMI",
     "region": "us-east-1"
   },
   "builders": [

@@ -1,9 +1,9 @@
 variable "name" {
-  default = "hashistack"
+  default = "brastemp"
 }
 
 variable "aws_profile" {
-  default = "hashistack"
+  default = "brastemp"
 }
 
 variable "aws_region" {
@@ -11,7 +11,7 @@ variable "aws_region" {
 }
 
 variable "ssh_key_name" {
-  default = "hashistack"
+  default = "brastemp"
 }
 
 variable "cluster_size" {
