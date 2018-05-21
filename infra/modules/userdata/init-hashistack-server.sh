@@ -86,6 +86,10 @@ EOF
 # RUN
 # ------------------------------------------------------------------------------
 
+function start_consul {
+  systemctl start consul
+}
+
 function run {
   local readonly metadata_nosce_file="/etc/nosce/metadata"
   local readonly consul_nosce_file="/etc/nosce/consul"
@@ -99,6 +103,9 @@ function run {
 
   log_info "Building Consul Configuration"
   build_consul_configuration $consul_config_dir
+
+  log_info "Starting Consul"
+  start_consul
 }
 
 run "$@"
