@@ -94,7 +94,7 @@ module "brastemp_servers" {
 }
 
 data "template_file" "init_brastemp_server" {
-  template = "${file("${path.module}/modules/userdata/init-brastemp-server.sh")}"
+  template = "${file("${path.module}/modules/userdata/init-brastemp-agent.sh")}"
 
   vars {
     cluster_size      = "${var.cluster_size}"
@@ -103,5 +103,6 @@ data "template_file" "init_brastemp_server" {
 
     datacenter = "dc1"
     region     = "${var.aws_region}"
+    server     = "true"
   }
 }

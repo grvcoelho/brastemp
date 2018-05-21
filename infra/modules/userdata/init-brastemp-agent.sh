@@ -63,21 +63,31 @@ function build_consul_configuration {
   local readonly consul_config_dir="$1"
   local readonly instance_ip_address="$EC2_LOCAL_IPV4"
   local readonly instance_id="$EC2_INSTANCE_ID"
-  local readonly bootstrap_expect="${cluster_size}"
   local readonly datacenter="${datacenter}"
   local readonly region="${region}"
+  local filename="client"
+  local server="false"
+  local bootstrap_expect=""
+  local ui="false"
 
-  cat << EOF > "$consul_config_dir/server.json"
+  if [[ ${server} == "true" ]]; then
+    bootstrap_expect="\"bootstrap_expect\": $cluster_size,"
+    filename="server"
+    server="true"
+    ui="true"
+  fi
+
+  cat << EOF > "$consul_config_dir/$filename.json"
 {
   "advertise_addr": "$instance_ip_address",
   "bind_addr": "$instance_ip_address",
-	"bootstrap_expect": $bootstrap_expect,
-	"datacenter": "$datacenter",
-	"retry_join": [
+  $bootstrap_expect
+  "datacenter": "$datacenter",
+  "retry_join": [
     "provider=aws region=$region tag_key=$CONSUL_TAG_KEY tag_value=$CONSUL_TAG_VALUE"
   ],
-	"server": true,
-  "ui" : true
+  "server": $server,
+  "ui" : $ui
 }
 EOF
 }
