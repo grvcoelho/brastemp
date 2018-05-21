@@ -3,8 +3,8 @@
     "aws_access_key": "",
     "aws_secret_key": "",
     "aws_profile": "brastemp",
-    "ami_name": "brastemp-arch-linux-lts-standard-{{ timestamp }}",
-    "ami_description": "Base brastemp AMI",
+    "ami_name": "brastemp/arch-linux-lts-standard-{{ timestamp }}",
+    "ami_description": "Brastemp Base",
     "region": "us-east-1"
   },
   "builders": [
@@ -19,6 +19,9 @@
       "instance_type": "t2.medium",
       "temporary_key_pair_name": "packer {{ uuid }}",
       "ssh_username": "root",
+      "tags": {
+        "Name": "{{ user `ami_description` }}"
+      },
       "source_ami_filter": {
         "filters": {
           "virtualization-type": "hvm",

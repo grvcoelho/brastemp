@@ -37,7 +37,7 @@ data "aws_ami" "brastemp" {
 
   filter {
     name   = "name"
-    values = ["brastemp-arch-linux-lts-standard-*"]
+    values = ["brastemp/arch-linux-lts-standard-*"]
   }
 }
 
