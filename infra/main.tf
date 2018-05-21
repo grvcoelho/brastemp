@@ -106,3 +106,43 @@ data "template_file" "init_brastemp_server" {
     server     = "true"
   }
 }
+
+# -----------------------------------------------------------------------------
+# CONSUL CLIENTS
+# -----------------------------------------------------------------------------
+
+module "brastemp_clients" {
+  source = "./modules/brastemp-cluster"
+
+  name = "${var.name}-client"
+
+  cluster_size  = "${var.cluster_size}"
+  instance_type = "t2.micro"
+
+  cluster_tag_key   = "${var.cluster_tag_key}"
+  cluster_tag_value = "${var.cluster_tag_value}"
+
+  ami_id       = "${data.aws_ami.brastemp.image_id}"
+  user_data    = "${data.template_file.init_brastemp_client.rendered}"
+  ssh_key_name = "${var.ssh_key_name}"
+
+  vpc_id     = "${module.network.vpc_id}"
+  subnet_ids = "${module.network.private_subnets_ids}"
+
+  allowed_inbound_cidr_blocks    = ["0.0.0.0/0"]
+  allowed_ssh_security_group_ids = ["${module.bastion.security_group_id}"]
+}
+
+data "template_file" "init_brastemp_client" {
+  template = "${file("${path.module}/modules/userdata/init-brastemp-agent.sh")}"
+
+  vars {
+    cluster_size      = "${var.cluster_size}"
+    cluster_tag_key   = "${var.cluster_tag_key}"
+    cluster_tag_value = "${var.cluster_tag_value}"
+
+    datacenter = "dc1"
+    region     = "${var.aws_region}"
+    server     = "false"
+  }
+}
