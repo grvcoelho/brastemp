@@ -13,12 +13,8 @@ EnvironmentFile=/etc/nosce/metadata
 EnvironmentFile=/etc/nosce/consul
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStart=/usr/local/bin/consul agent \
-  -advertise ${EC2_LOCAL_IPV4} \
-  -advertise-wan ${EC2_PUBLIC_IPV4}
-  -bind ${EC2_LOCAL_IPV4} \
   -data-dir {{ consul_data_dir }} \
   -config-dir {{ consul_config_dir }} \
-  -retry-join "provider=aws tag_key=$CONSUL_TAG_KEY tag_value=$CONSUL_TAG_VALUE"
 
 [Install]
 WantedBy=multi-user.target
