@@ -74,45 +74,40 @@ data "aws_iam_policy_document" "instance_role" {
 # LAUNCH_CONFIGURATION AND AUTO_SCALING_GROUPS
 # -----------------------------------------------------------------------------
 
-resource "aws_launch_configuration" "launch_configuration" {
-  name_prefix   = "${var.name}"
-  image_id      = "${var.ami_id}"
+resource "aws_instance" "bastion" {
+  count         = "${var.cluster_size}"
+  ami           = "${var.ami_id}"
   instance_type = "${var.instance_type}"
   user_data     = "${var.user_data}"
 
   iam_instance_profile = "${aws_iam_instance_profile.instance_profile.name}"
   key_name             = "${var.ssh_key_name}"
   security_groups      = ["${aws_security_group.bastion_security_group.id}"]
+  subnet_id            = "${element(var.subnet_ids, 0)}"
 
   root_block_device {
     volume_type           = "${var.root_volume_type}"
     volume_size           = "${var.root_volume_size}"
     delete_on_termination = "${var.root_volume_delete_on_termination}"
   }
+
+  tags {
+    Name = "${var.name}"
+  }
 }
 
-resource "aws_autoscaling_group" "autoscaling_group" {
-  name_prefix = "${var.name}"
+# -----------------------------------------------------------------------------
+# ROUTE53 AND DNS
+# -----------------------------------------------------------------------------
 
-  launch_configuration = "${aws_launch_configuration.launch_configuration.name}"
+data "aws_route53_zone" "base" {
+  name = "${var.dns_base}"
+}
 
-  availability_zones  = ["${var.availability_zones}"]
-  vpc_zone_identifier = ["${var.subnet_ids}"]
-
-  min_size         = "${var.cluster_size}"
-  max_size         = "${var.cluster_size}"
-  desired_capacity = "${var.cluster_size}"
-
-  health_check_type         = "EC2"
-  health_check_grace_period = 300
-  wait_for_capacity_timeout = "10m"
-
-  tags = [
-    {
-      key                 = "Name"
-      value               = "${var.name}"
-      propagate_at_launch = true
-    },
-    "${var.tags}",
-  ]
+resource "aws_route53_record" "bastion" {
+  zone_id = "${data.aws_route53_zone.base.zone_id}"
+  name    = "bastion.${var.dns_base}"
+  type    = "A"
+  ttl     = "300"
+  records = ["${aws_instance.bastion.*.public_ip}"]
 }

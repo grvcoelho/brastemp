@@ -10,6 +10,10 @@ variable "aws_region" {
   default = "us-east-1"
 }
 
+variable "dns_base" {
+  type = "string"
+}
+
 variable "ssh_key_name" {
   default = "brastemp"
 }

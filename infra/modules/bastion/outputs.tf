@@ -1,13 +1,5 @@
-output "asg_name" {
-  value = "${aws_autoscaling_group.autoscaling_group.name}"
-}
-
 output "cluster_size" {
-  value = "${aws_autoscaling_group.autoscaling_group.desired_capacity}"
-}
-
-output "launch_configuration_name" {
-  value = "${aws_launch_configuration.launch_configuration.name}"
+  value = "${var.cluster_size}"
 }
 
 output "iam_role_arn" {
