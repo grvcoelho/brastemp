@@ -103,7 +103,7 @@ function start_consul {
 function run {
   local readonly metadata_nosce_file="/etc/nosce/metadata"
   local readonly consul_nosce_file="/etc/nosce/consul"
-  local readonly consul_config_dir="/etc/consul/conf.d"
+  local readonly consul_config_dir="/etc/consul.d"
 
   log_info "Building EC2 Metadata"
   build_ec2_metadata $metadata_nosce_file
