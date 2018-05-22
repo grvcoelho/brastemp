@@ -15,7 +15,7 @@ module "network" {
   source = "./modules/network"
   name   = "${var.name}"
 
-  vpc_cidr_block = "17.10.0.0/16"
+  vpc_cidr_block = "10.10.0.0/16"
 
   availability_zones = [
     "${var.aws_region}a",
