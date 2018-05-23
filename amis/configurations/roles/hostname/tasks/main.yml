@@ -1,0 +1,12 @@
+- name: "Copy hostname data"
+  copy:
+    src: names.txt
+    dest: "{{ hostname_file }}"
+
+- name: "Generate hostname"
+  register: new_hostname
+  shell: echo "$(sort -R {{ hostname_file }} | head -n 1)-$(sort -R {{ hostname_file }} | head -n 1)" | cut -c 1-15
+
+- name: "Set hostname"
+  hostname:
+    name: "{{ new_hostname.stdout }}"
