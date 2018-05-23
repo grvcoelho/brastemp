@@ -1,0 +1,24 @@
+- name: "Install dnsmasq"
+  package:
+    name: dnsmasq
+    state: latest
+
+- name: "Register dnsmasq"
+  service:
+    name: "dnsmasq"
+    enabled: true
+
+- name: "Add dnsmasq config folder"
+  file:
+    path: "{{ dnsmasq_config_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+    recurse: yes
+
+- name: "Restart systemd-resolved"
+  systemd:
+    name: systemd-resolved
+    state: restarted
+    daemon_reload: yes

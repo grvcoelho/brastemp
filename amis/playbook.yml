@@ -3,4 +3,5 @@
   roles:
     - base
     - nosce
+    - dnsmasq
     - consul
