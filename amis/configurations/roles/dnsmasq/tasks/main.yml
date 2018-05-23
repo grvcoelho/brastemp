@@ -17,6 +17,27 @@
     mode: 0755
     recurse: yes
 
+- name: "Add dnsmasq config file"
+  copy:
+    src: dnsmasq.conf
+    dest: "{{ dnsmasq_config_file }}"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: "Add dnsmasq.service"
+  copy:
+    src: dnsmasq.service
+    dest: /etc/systemd/system
+    owner: root
+    group: root
+    mode: 0644
+
+- name: "Register consul"
+  service:
+    name: "dnsmasq"
+    enabled: false
+
 - name: "Restart systemd-resolved"
   systemd:
     name: systemd-resolved

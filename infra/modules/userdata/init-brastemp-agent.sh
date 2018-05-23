@@ -96,6 +96,18 @@ EOF
 # RUN
 # ------------------------------------------------------------------------------
 
+function configure_dns_resolution {
+  cat << EOF > /etc/systemd/resolved.conf
+[Resolve]
+DNS=$EC2_LOCAL_IPV4
+FallbackDNS=8.8.8.8 8.8.4.4 2001:4860:4860::8888 2001:4860:4860::8844
+EOF
+
+  systemctl daemon-reload
+  systemctl restart systemd-resolved
+  systemctl restart dnsmasq
+}
+
 function start_consul {
   systemctl start consul
 }
@@ -113,6 +125,9 @@ function run {
 
   log_info "Building Consul Configuration"
   build_consul_configuration $consul_config_dir
+
+  log_info "Configuring DNS Resolution"
+  configure_dns_resolution
 
   log_info "Starting Consul"
   start_consul
