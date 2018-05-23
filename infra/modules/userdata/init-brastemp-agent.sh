@@ -71,7 +71,7 @@ function build_consul_configuration {
   local ui="false"
 
   if [[ ${server} == "true" ]]; then
-    bootstrap_expect="\"bootstrap_expect\": $cluster_size,"
+    bootstrap_expect="\"bootstrap_expect\": ${cluster_size},"
     filename="server"
     server="true"
     ui="true"

@@ -103,6 +103,10 @@ resource "aws_launch_configuration" "launch_configuration" {
     volume_size           = "${var.root_volume_size}"
     delete_on_termination = "${var.root_volume_delete_on_termination}"
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_autoscaling_group" "autoscaling_group" {
@@ -120,6 +124,10 @@ resource "aws_autoscaling_group" "autoscaling_group" {
   health_check_type         = "EC2"
   health_check_grace_period = 300
   wait_for_capacity_timeout = "10m"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 
   tags = [
     {
