@@ -103,8 +103,19 @@ DNS=$EC2_LOCAL_IPV4
 FallbackDNS=8.8.8.8 8.8.4.4 2001:4860:4860::8888 2001:4860:4860::8844
 EOF
 
+  # Remove /etc/resolv.conf as it is a symlink to a dynamically generated file
+  # created by systemd-resolved. Without this, when systemd-resolved is
+  # reloaded, there will be two nameservers on /etc/resolv.conf: our local ipv4
+  # and the AWS DNS ip for the subnet. This will cause DNS queries to be
+  # load-balanced between the two nameservers, but only our local ipv4 can
+  # resolve .consul queries.
+  rm -f /etc/resolv.conf
+
+  cat << EOF > /etc/resolv.conf
+nameserver $EC2_LOCAL_IPV4
+EOF
+
   systemctl daemon-reload
-  systemctl restart systemd-resolved
   systemctl restart dnsmasq
 }
 

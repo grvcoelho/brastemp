@@ -25,6 +25,14 @@
     group: root
     mode: 0644
 
+- name: "Add dnsmasq-config-dns binary"
+  template:
+    src: dnsmasq-config-dns
+    dest: /usr/local/bin/dnsmasq-config-dns
+    owner: root
+    group: root
+    mode: 0755
+
 - name: "Add dnsmasq.service"
   copy:
     src: dnsmasq.service
@@ -33,7 +41,7 @@
     group: root
     mode: 0644
 
-- name: "Register consul"
+- name: "Register dnsmasq"
   service:
     name: "dnsmasq"
     enabled: false
