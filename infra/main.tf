@@ -58,7 +58,7 @@ module "bastion" {
   ssh_key_name = "${var.ssh_key_name}"
 
   vpc_id     = "${module.network.vpc_id}"
-  subnet_ids = "${module.network.public_subnets_ids}"
+  subnet_ids = "${module.network.public_subnet_ids}"
 
   allowed_ssh_cidr_blocks = ["0.0.0.0/0"]
 }
@@ -87,7 +87,7 @@ module "brastemp_servers" {
   ssh_key_name = "${var.ssh_key_name}"
 
   vpc_id     = "${module.network.vpc_id}"
-  subnet_ids = "${module.network.private_subnets_ids}"
+  subnet_ids = "${module.network.private_subnet_ids}"
 
   allowed_inbound_cidr_blocks    = ["0.0.0.0/0"]
   allowed_ssh_security_group_ids = ["${module.bastion.security_group_id}"]
@@ -127,7 +127,7 @@ module "brastemp_clients" {
   ssh_key_name = "${var.ssh_key_name}"
 
   vpc_id     = "${module.network.vpc_id}"
-  subnet_ids = "${module.network.private_subnets_ids}"
+  subnet_ids = "${module.network.private_subnet_ids}"
 
   allowed_inbound_cidr_blocks    = ["0.0.0.0/0"]
   allowed_ssh_security_group_ids = ["${module.bastion.security_group_id}"]
