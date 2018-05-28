@@ -1,1 +1,1 @@
-hostname_file: "/tmp/names.txt"
+hostname_file: "/etc/names.txt"

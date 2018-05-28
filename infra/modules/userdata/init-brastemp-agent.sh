@@ -92,9 +92,13 @@ function build_consul_configuration {
 EOF
 }
 
-# ------------------------------------------------------------------------------
-# RUN
-# ------------------------------------------------------------------------------
+function configure_hostname {
+  local readonly hostname_file="/etc/names.txt"
+  local readonly hostname="$(sort -R $hostname_file| head -n 1)-$(sort -R $hostname_file | head -n 1)"
+  local readonly new_hostname=$(echo $hostname | cut -c 1-15)
+
+  hostnamectl set-hostname $new_hostname
+}
 
 function configure_dns_resolution {
   cat << EOF > /etc/systemd/resolved.conf
@@ -119,6 +123,10 @@ EOF
   systemctl restart dnsmasq
 }
 
+# ------------------------------------------------------------------------------
+# RUN
+# ------------------------------------------------------------------------------
+
 function start_consul {
   systemctl start consul
 }
@@ -139,6 +147,9 @@ function run {
 
   log_info "Configuring DNS Resolution"
   configure_dns_resolution
+
+  log_info "Configuring hostname"
+  configure_hostname
 
   log_info "Starting Consul"
   start_consul
