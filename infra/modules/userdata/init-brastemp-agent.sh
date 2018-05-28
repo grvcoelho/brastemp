@@ -96,8 +96,13 @@ function configure_hostname {
   local readonly hostname_file="/etc/names.txt"
   local readonly hostname="$(sort -R $hostname_file| head -n 1)-$(sort -R $hostname_file | head -n 1)"
   local readonly new_hostname=$(echo $hostname | cut -c 1-15)
+  local readonly ip=$(/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1)
 
-  hostnamectl set-hostname $new_hostname
+  # Set new hostname
+  hostnamectl set-hostname "$new_hostname.local"
+
+  # Add new hostname to /etc/hosts
+  echo "$ip $new_hostname" >> /etc/hosts
 }
 
 function configure_dns_resolution {
