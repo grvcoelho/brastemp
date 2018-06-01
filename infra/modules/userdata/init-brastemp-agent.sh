@@ -71,24 +71,24 @@ function build_consul_configuration {
   local ui="false"
 
   if [[ ${server} == "true" ]]; then
-    bootstrap_expect="\"bootstrap_expect\": ${cluster_size},"
     filename="server"
+
+    bootstrap_expect="bootstrap_expect = ${cluster_size}"
     server="true"
     ui="true"
   fi
 
-  cat << EOF > "$consul_config_dir/$filename.json"
-{
-  "advertise_addr": "$instance_ip_address",
-  "bind_addr": "$instance_ip_address",
-  $bootstrap_expect
-  "datacenter": "$datacenter",
-  "retry_join": [
-    "provider=aws region=$region tag_key=$CONSUL_TAG_KEY tag_value=$CONSUL_TAG_VALUE"
-  ],
-  "server": $server,
-  "ui" : $ui
-}
+  cat << EOF > "$consul_config_dir/$filename.hcl"
+advertise_addr = "$instance_ip_address"
+bind_addr = "$instance_ip_address"
+$bootstrap_expect
+client_addr = "0.0.0.0"
+datacenter = "$datacenter"
+retry_join = [
+  "provider=aws region=$region tag_key=$CONSUL_TAG_KEY tag_value=$CONSUL_TAG_VALUE"
+]
+server = $server
+ui = $ui
 EOF
 }
 

@@ -48,7 +48,7 @@
 
 - name: "Copy consul initial config"
   copy:
-    src: base.json
+    src: consul.hcl
     dest: "{{ consul_config_dir }}"
     owner: consul
     group: consul
