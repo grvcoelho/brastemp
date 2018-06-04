@@ -41,32 +41,6 @@ data "aws_ami" "brastemp" {
 }
 
 # -----------------------------------------------------------------------------
-# BASTION
-# -----------------------------------------------------------------------------
-
-module "bastion" {
-  source = "./modules/bastion"
-
-  name = "${var.name}-bastion"
-
-  cluster_size  = 1
-  instance_type = "t2.micro"
-
-  ami_id       = "${data.aws_ami.brastemp.image_id}"
-  user_data    = "${data.template_file.init_bastion.rendered}"
-  ssh_key_name = "${var.ssh_key_name}"
-
-  vpc_id     = "${module.network.vpc_id}"
-  subnet_ids = "${module.network.public_subnet_ids}"
-
-  allowed_ssh_cidr_blocks = ["0.0.0.0/0"]
-}
-
-data "template_file" "init_bastion" {
-  template = "${file("${path.module}/modules/userdata/init-bastion.sh")}"
-}
-
-# -----------------------------------------------------------------------------
 # CONSUL SERVERS
 # -----------------------------------------------------------------------------
 
@@ -86,10 +60,10 @@ module "brastemp_servers" {
   ssh_key_name = "${var.ssh_key_name}"
 
   vpc_id     = "${module.network.vpc_id}"
-  subnet_ids = "${module.network.private_subnet_ids}"
+  subnet_ids = "${module.network.public_subnet_ids}"
 
-  allowed_inbound_cidr_blocks    = ["0.0.0.0/0"]
-  allowed_ssh_security_group_ids = ["${module.bastion.security_group_id}"]
+  allowed_inbound_cidr_blocks = ["0.0.0.0/0"]
+  allowed_ssh_cidr_blocks     = ["0.0.0.0/0"]
 }
 
 data "template_file" "init_brastemp_server" {
@@ -126,10 +100,10 @@ module "brastemp_clients" {
   ssh_key_name = "${var.ssh_key_name}"
 
   vpc_id     = "${module.network.vpc_id}"
-  subnet_ids = "${module.network.private_subnet_ids}"
+  subnet_ids = "${module.network.public_subnet_ids}"
 
-  allowed_inbound_cidr_blocks    = ["0.0.0.0/0"]
-  allowed_ssh_security_group_ids = ["${module.bastion.security_group_id}"]
+  allowed_inbound_cidr_blocks = ["0.0.0.0/0"]
+  allowed_ssh_cidr_blocks     = ["0.0.0.0/0"]
 }
 
 data "template_file" "init_brastemp_client" {
