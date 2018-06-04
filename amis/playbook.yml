@@ -6,3 +6,4 @@
     - nosce
     - dnsmasq
     - consul
+    - nomad
