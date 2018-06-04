@@ -51,7 +51,6 @@ module "bastion" {
 
   cluster_size  = 1
   instance_type = "t2.micro"
-  dns_base      = "${var.dns_base}"
 
   ami_id       = "${data.aws_ami.brastemp.image_id}"
   user_data    = "${data.template_file.init_bastion.rendered}"

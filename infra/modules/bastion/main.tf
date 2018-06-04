@@ -95,19 +95,3 @@ resource "aws_instance" "bastion" {
     Name = "${var.name}"
   }
 }
-
-# -----------------------------------------------------------------------------
-# ROUTE53 AND DNS
-# -----------------------------------------------------------------------------
-
-data "aws_route53_zone" "base" {
-  name = "${var.dns_base}"
-}
-
-resource "aws_route53_record" "bastion" {
-  zone_id = "${data.aws_route53_zone.base.zone_id}"
-  name    = "bastion.${var.dns_base}"
-  type    = "A"
-  ttl     = "300"
-  records = ["${aws_instance.bastion.*.public_ip}"]
-}

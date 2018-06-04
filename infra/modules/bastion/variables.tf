@@ -19,10 +19,6 @@ variable "vpc_id" {
   description = "The ID of the VPC in which to deploy the Consul cluster"
 }
 
-variable "dns_base" {
-  description = "The base hosted zone domain name to create a route53 record"
-}
-
 variable "user_data" {
   description = "A User Data script to execute while the server is booting. We remmend passing in a bash script that executes the run-consul script, which should have been installed in the Consul AMI by the install-consul module."
 }
