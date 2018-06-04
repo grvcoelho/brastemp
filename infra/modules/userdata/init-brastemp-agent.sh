@@ -92,6 +92,44 @@ ui = $ui
 EOF
 }
 
+function build_nomad_configuration {
+  local readonly nomad_config_dir="$1"
+  local readonly datacenter="${datacenter}"
+  local filename="client"
+  local server="false"
+  local client="true"
+  local bootstrap_expect=""
+
+  if [[ ${server} == "true" ]]; then
+    filename="server"
+
+    bootstrap_expect="bootstrap_expect = ${cluster_size}"
+    server="true"
+    client="false"
+  fi
+
+  cat << EOF > "$nomad_config_dir/$filename.hcl"
+bind_addr = "0.0.0.0"
+
+datacenter = "$datacenter"
+
+server {
+  enabled = $server
+  $bootstrap_expect
+}
+
+client {
+  enabled = $client
+}
+
+consul {
+  address = "127.0.0.1:8500"
+  client_service_name = "nomad-client"
+  server_service_name = "nomad"
+}
+EOF
+}
+
 function configure_hostname {
   local readonly hostname_file="/etc/names.txt"
   local readonly hostname="$(sort -R $hostname_file| head -n 1)-$(sort -R $hostname_file | head -n 1)"
@@ -132,14 +170,16 @@ EOF
 # RUN
 # ------------------------------------------------------------------------------
 
-function start_consul {
-  systemctl start consul
+function start_brastemp {
+  systemctl start --now --no-block consul
+  systemctl start --now --no-block nomad
 }
 
 function run {
   local readonly metadata_nosce_file="/etc/nosce/metadata"
   local readonly consul_nosce_file="/etc/nosce/consul"
   local readonly consul_config_dir="/etc/consul.d"
+  local readonly nomad_config_dir="/etc/nomad.d"
 
   log_info "Building EC2 Metadata"
   build_ec2_metadata $metadata_nosce_file
@@ -150,14 +190,17 @@ function run {
   log_info "Building Consul Configuration"
   build_consul_configuration $consul_config_dir
 
+  log_info "Building Nomad Configuration"
+  build_nomad_configuration $nomad_config_dir
+
   log_info "Configuring DNS Resolution"
   configure_dns_resolution
 
   log_info "Configuring hostname"
   configure_hostname
 
-  log_info "Starting Consul"
-  start_consul
+  log_info "Starting Brastemp"
+  start_brastemp
 }
 
 run "$@"
