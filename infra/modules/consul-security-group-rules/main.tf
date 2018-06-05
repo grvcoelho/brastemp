@@ -2,16 +2,6 @@
 # SECURITY GROUP RULES - FROM CIDR_BLOCKS
 # -----------------------------------------------------------------------------
 
-resource "aws_security_group_rule" "allow_self_all" {
-  type      = "ingress"
-  from_port = 0
-  to_port   = 0
-  protocol  = -1
-  self      = true
-
-  security_group_id = "${var.security_group_id}"
-}
-
 resource "aws_security_group_rule" "allow_server_rpc_inbound" {
   count       = "${length(var.allowed_inbound_cidr_blocks) >= 1 ? 1 : 0}"
   type        = "ingress"
