@@ -24,6 +24,12 @@
     shell: "/bin/false"
     home: "{{ nomad_home_dir }}"
 
+- name: "Add nomad user to docker group"
+  user:
+    append: yes
+    name: nomad
+    groups: docker
+
 - name: "Add nomad config folder"
   file:
     path: "{{ nomad_config_dir }}"
