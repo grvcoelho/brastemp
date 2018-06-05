@@ -1,0 +1,3 @@
+with_compose: false
+docker_compose_version: 1.13.0
+docker_config_dir: /etc/docker.d

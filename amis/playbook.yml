@@ -4,6 +4,8 @@
     - base
     - hostname
     - nosce
+    - role: docker
+      with_compose: true
     - dnsmasq
     - consul
     - nomad

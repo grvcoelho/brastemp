@@ -1,0 +1,36 @@
+- name: "Install docker"
+  package:
+    name: docker
+    state: latest
+  become: true
+
+- name: "Create docker system group"
+  group:
+    name: docker
+    state: present
+    system: yes
+
+- name: "Register docker"
+  service:
+    name: "docker"
+    enabled: true
+  become: true
+
+- name: "Add docker config folder"
+  file:
+    path: "{{ docker_config_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+    recurse: yes
+
+- name: "Install docker-compose"
+  get_url:
+    url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64"
+    dest: /usr/local/bin/docker-compose
+    mode: 0755
+  become: true
+  when: with_compose
+
+
