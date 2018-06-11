@@ -34,6 +34,28 @@ resource "aws_security_group_rule" "allow_ssh_inbound_from_security_group_ids" {
   security_group_id = "${aws_security_group.lc_security_group.id}"
 }
 
+resource "aws_security_group_rule" "allow_lb_http_inbound" {
+  count       = "${var.server ? 0 : 1}"
+  type        = "ingress"
+  from_port   = "80"
+  to_port     = "80"
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+
+  security_group_id = "${aws_security_group.lc_security_group.id}"
+}
+
+resource "aws_security_group_rule" "allow_lb_admin_inbound" {
+  count       = "${var.server ? 0 : 1}"
+  type        = "ingress"
+  from_port   = "8080"
+  to_port     = "8080"
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+
+  security_group_id = "${aws_security_group.lc_security_group.id}"
+}
+
 resource "aws_security_group_rule" "allow_self_all" {
   type      = "ingress"
   from_port = 0

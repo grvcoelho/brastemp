@@ -28,6 +28,11 @@ variable "user_data" {
 # These parameters have reasonable defaults.
 # ------------------------------------------------------------------------------
 
+variable "server" {
+  description = "Whether the cluster is a a cluster of brastemp servers"
+  default     = false
+}
+
 variable "cluster_size" {
   description = "The number of nodes to have in the Consul cluster. We strongly recommended that you use either 3 or 5."
   default     = 3
