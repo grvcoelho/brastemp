@@ -8,8 +8,8 @@ variable "nomad_address" {
   type        = "string"
 }
 
-variable "traefik_domain" {
-  description = "Base domain that will be used as main traefik endpoint"
+variable "dns_domain" {
+  description = "The base domain that will be used to expose services"
   type        = "string"
 }
 
@@ -17,6 +17,21 @@ variable "traefik_domain" {
 # OPTIONAL PARAMETERS
 # These parameters have reasonable defaults.
 # -----------------------------------------------------------------------------
+
+variable "aws_profile" {
+  description = "The AWS profile to be used by terraform"
+  default     = "brastemp"
+}
+
+variable "aws_region" {
+  description = "The AWS region where resources will be created"
+  default     = "us-east-1"
+}
+
+variable "load_balancer_dns_name" {
+  description = "REMOVE"
+  default     = "brastemp-client-lb-1483179972.us-east-1.elb.amazonaws.com"
+}
 
 variable "nomad_region" {
   default = "global"

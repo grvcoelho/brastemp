@@ -3,11 +3,13 @@ variable "name" {
 }
 
 variable "aws_profile" {
-  default = "brastemp"
+  description = "The AWS profile to be used by terraform"
+  default     = "brastemp"
 }
 
 variable "aws_region" {
-  default = "us-east-1"
+  description = "The AWS region where resources will be created"
+  default     = "us-east-1"
 }
 
 variable "ssh_key_name" {
