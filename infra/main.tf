@@ -41,7 +41,7 @@ data "aws_ami" "brastemp" {
 }
 
 # -----------------------------------------------------------------------------
-# CONSUL SERVERS
+# BRASTEMP SERVERS
 # -----------------------------------------------------------------------------
 
 module "brastemp_servers" {
@@ -81,7 +81,7 @@ data "template_file" "init_brastemp_server" {
 }
 
 # -----------------------------------------------------------------------------
-# CONSUL CLIENTS
+# BRASTEMP CLIENTS
 # -----------------------------------------------------------------------------
 
 module "brastemp_clients" {
@@ -118,4 +118,43 @@ data "template_file" "init_brastemp_client" {
     region     = "${var.aws_region}"
     server     = "false"
   }
+}
+
+# -----------------------------------------------------------------------------
+# LOAD BALANCING
+# -----------------------------------------------------------------------------
+
+module "brastemp_client_lb" {
+  source = "./modules/load-balancer"
+
+  name                 = "${var.name}-client"
+  internal             = false
+  security_group_ids   = ["${module.brastemp_clients.security_group_id}"]
+  subnet_ids           = ["${module.brastemp_clients.subnet_ids}"]
+  autoscaling_group_id = "${module.brastemp_clients.asg_id}"
+
+  listeners = [
+    {
+      instance_port     = "80"
+      instance_protocol = "HTTP"
+      lb_port           = "80"
+      lb_protocol       = "HTTP"
+    },
+    {
+      instance_port     = "8080"
+      instance_protocol = "HTTP"
+      lb_port           = "8080"
+      lb_protocol       = "HTTP"
+    },
+  ]
+
+  health_checks = [
+    {
+      target              = "HTTP:8080/"
+      interval            = 30
+      healthy_threshold   = 2
+      unhealthy_threshold = 2
+      timeout             = 5
+    },
+  ]
 }
