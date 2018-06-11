@@ -48,7 +48,7 @@ resource "aws_route53_record" "traefik_record" {
   name    = "traefik.${data.aws_route53_zone.dns_base.name}"
   type    = "CNAME"
   ttl     = "300"
-  records = ["${var.load_balancer_dns_name}"]
+  records = ["lb.${var.domain_name}"]
 }
 
 # -----------------------------------------------------------------------------
@@ -77,7 +77,7 @@ resource "aws_route53_record" "hello_record" {
   name    = "hello.${data.aws_route53_zone.dns_base.name}"
   type    = "CNAME"
   ttl     = "300"
-  records = ["${var.load_balancer_dns_name}"]
+  records = ["lb.${var.domain_name}"]
 }
 
 # -----------------------------------------------------------------------------
@@ -106,5 +106,5 @@ resource "aws_route53_record" "whoami_record" {
   name    = "whoami.${data.aws_route53_zone.dns_base.name}"
   type    = "CNAME"
   ttl     = "300"
-  records = ["${var.load_balancer_dns_name}"]
+  records = ["lb.${var.domain_name}"]
 }

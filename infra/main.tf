@@ -47,7 +47,8 @@ data "aws_ami" "brastemp" {
 module "brastemp_servers" {
   source = "./modules/brastemp-cluster"
 
-  name = "${var.name}-server"
+  name   = "${var.name}-server"
+  server = true
 
   cluster_size  = "${var.cluster_size}"
   instance_type = "t2.micro"
@@ -87,7 +88,8 @@ data "template_file" "init_brastemp_server" {
 module "brastemp_clients" {
   source = "./modules/brastemp-cluster"
 
-  name = "${var.name}-client"
+  name   = "${var.name}-client"
+  server = false
 
   cluster_size  = "${var.cluster_size}"
   instance_type = "t2.micro"
@@ -133,6 +135,9 @@ module "brastemp_client_lb" {
   subnet_ids           = ["${module.brastemp_clients.subnet_ids}"]
   autoscaling_group_id = "${module.brastemp_clients.asg_id}"
 
+  dns_domain = "${var.dns_domain}"
+  dns_name   = "lb.${var.dns_domain}"
+
   listeners = [
     {
       instance_port     = "80"
@@ -150,7 +155,7 @@ module "brastemp_client_lb" {
 
   health_checks = [
     {
-      target              = "HTTP:8080/"
+      target              = "TCP:8080"
       interval            = 30
       healthy_threshold   = 2
       unhealthy_threshold = 2

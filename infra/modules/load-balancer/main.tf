@@ -33,3 +33,20 @@ resource "aws_autoscaling_attachment" "asg_attachment" {
   autoscaling_group_name = "${var.autoscaling_group_id}"
   elb                    = "${aws_elb.load_balancer.id}"
 }
+
+# -----------------------------------------------------------------------------
+# DNS RECORDS
+# -----------------------------------------------------------------------------
+
+data "aws_route53_zone" "dns_base" {
+  name         = "${var.dns_domain}."
+  private_zone = false
+}
+
+resource "aws_route53_record" "record" {
+  zone_id = "${data.aws_route53_zone.dns_base.zone_id}"
+  name    = "${var.dns_name}"
+  type    = "CNAME"
+  ttl     = "300"
+  records = ["${aws_elb.load_balancer.dns_name}"]
+}

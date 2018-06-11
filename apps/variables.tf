@@ -28,11 +28,6 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
-variable "load_balancer_dns_name" {
-  description = "REMOVE"
-  default     = "brastemp-client-lb-1483179972.us-east-1.elb.amazonaws.com"
-}
-
 variable "nomad_region" {
   default = "global"
 }
