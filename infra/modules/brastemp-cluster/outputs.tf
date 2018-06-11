@@ -1,3 +1,7 @@
+output "asg_id" {
+  value = "${aws_autoscaling_group.autoscaling_group.id}"
+}
+
 output "asg_name" {
   value = "${aws_autoscaling_group.autoscaling_group.name}"
 }
@@ -20,6 +24,10 @@ output "iam_role_id" {
 
 output "security_group_id" {
   value = "${aws_security_group.lc_security_group.id}"
+}
+
+output "subnet_ids" {
+  value = "${var.subnet_ids}"
 }
 
 output "cluster_tag_key" {
