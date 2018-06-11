@@ -72,6 +72,14 @@ resource "nomad_job" "hello_job" {
   jobspec = "${data.template_file.hello_job_file.rendered}"
 }
 
+resource "aws_route53_record" "hello_record" {
+  zone_id = "${data.aws_route53_zone.dns_base.zone_id}"
+  name    = "hello.${data.aws_route53_zone.dns_base.name}"
+  type    = "CNAME"
+  ttl     = "300"
+  records = ["${var.load_balancer_dns_name}"]
+}
+
 # -----------------------------------------------------------------------------
 # WHOAMI
 # A service that outputs request parameters
